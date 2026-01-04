@@ -192,19 +192,27 @@ python -m smbna.simulation.run_ablation --runs 50
 - **[README](README.md)** (this file) - Project overview and quick start
 - **[CHANGELOG](CHANGELOG.md)** - Version history and updates
 - **[LICENSE](LICENSE)** - License information
+- **[Architecture Overview](docs/architecture_overview.md)** - High-level system architecture
+- **[API Reference](docs/api_reference.md)** - Public API documentation
+- **[Development Guide](docs/development_guide.md)** - Contributor setup and guidelines
+- **[Testing Guide](docs/testing_guide.md)** - Test structure and execution
+- **[Configuration Reference](docs/config_reference.md)** - Configuration parameters
+- **[Troubleshooting Guide](docs/troubleshooting.md)** - Common setup and development issues
 
-### Internal Documentation
+### Documentation Scope
 
-*Note: Internal documentation is available in the repository but excluded from public commits.*
+**This repository intentionally omits deployment, security, and operational documentation. Those materials are available under controlled access for research, evaluation, and funding purposes.**
 
-- **System Architecture** - Complete system design and component interactions
-- **API Reference** - Comprehensive API documentation
-- **Development Guide** - Setup, coding standards, and workflows
-- **Deployment & Operations** - Production deployment procedures
-- **Testing Documentation** - Test strategy and execution guidelines
-- **Configuration Reference** - Complete parameter documentation
-- **Troubleshooting Guide** - Common issues and solutions
-- **Security Documentation** - Security architecture and best practices
+**What's Included:**
+- How the system works (architecture, API)
+- How to reproduce results (development, testing)
+- How to extend it safely (development guide, configuration)
+
+**What's Excluded:**
+- Deployment procedures
+- Security architecture and threat models
+- Operational configuration and tuning
+- Internal implementation details
 
 ---
 

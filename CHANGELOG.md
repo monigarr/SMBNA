@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+- Extended belief engines
+- Additional invariant validators
+- Hardware-in-the-loop support
+- Performance optimizations
+
+---
+
+## [0.1.0] - 2026-01-XX
+
 ### Added
 - Comprehensive enterprise-level documentation suite
   - System Architecture documentation
@@ -46,38 +56,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Incomplete code documentation
 - Missing project metadata
 
-## [1.0.0] - 2026-01-XX
-
-### Added
-- Initial release of SMBNA framework
-- Core navigation arbitration system
-  - Belief state data structures
-  - Multiple belief engines (GPS, INS, Magnetic, LEO, Dead Reckoning)
-  - Invariant validation system
-  - Trust arbitration engine
-  - Explicit refusal mechanism
-- Simulation harness
-  - GPS degradation and spoofing scenarios
-  - Monte Carlo evaluation
-  - Baseline EKF comparison
-- Analysis and visualization tools
-  - Trajectory plotting
-  - Error analysis
-  - Statistical significance testing
-  - LaTeX export utilities
-- Baseline implementations
-  - Extended Kalman Filter (EKF) for comparison
-- Documentation
-  - README with project overview
-  - Program architecture documentation
-  - Engineering guardrails
-
-### Features
+### Core Framework Features
 - **Belief Independence**: Parallel belief engines with no cross-dependencies
 - **Invariant-Based Validation**: Multiple consistency checks (temporal, physics, coherence, covariance, earth field)
 - **Explicit Refusal**: NAV_UNSAFE signaling when confidence collapses
 - **Trust Arbitration**: Dynamic belief selection based on confidence and consistency
 - **Safety-First Design**: Prioritizes safe degradation over false confidence
+
+### Core Components
+- Belief state data structures
+- Multiple belief engines (GPS, INS, Magnetic, LEO, Dead Reckoning)
+- Invariant validation system
+- Trust arbitration engine
+- Explicit refusal mechanism
+- Simulation harness with GPS degradation and spoofing scenarios
+- Monte Carlo evaluation framework
+- Baseline EKF implementation for comparison
+- Analysis and visualization tools
 
 ### Research Status
 - Architecture complete
@@ -85,6 +80,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Baselines implemented
 - Paper-ready figures
 - Grant/proposal ready
+- Test infrastructure established
+- Enterprise documentation framework
 
 ---
 
@@ -101,7 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Version History
 
-- **1.0.0** - Initial public release
+- **0.1.0** - Initial public research release (2026-01-XX)
 - **Unreleased** - Development version with ongoing improvements
 
 ---
