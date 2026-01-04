@@ -243,3 +243,135 @@ ensuring all claims are accurate and verifiable.
 - Meets requirements for research publication
 - Supports reviewer verification
 - Enables independent reproduction of results
+
+---
+
+## Simulation Scripts: Enhanced User Experience
+
+### Command-Line Messages
+
+Added comprehensive command-line messages to all simulation scripts to guide users
+through simulation execution and results handling.
+
+### Updated Scripts
+
+**1. `run_simulation.py` (Single Simulation)**
+- Added detailed progress and completion messages
+- Configuration summary (duration, seed)
+- Results summary (final position error, refusal rate, timesteps)
+- Next steps guidance:
+  - Visualization options (plot_trajectory, plot_innovation)
+  - CSV/Parquet export instructions
+  - Programmatic usage examples
+
+**2. `run_monte_carlo.py` (Monte Carlo Evaluation)**
+- Progress indication with run count
+- Aggregate statistics summary
+- File location information (CSV and Parquet paths)
+- Column descriptions for result files
+- Code examples for:
+  - Loading and analyzing results
+  - Statistical significance testing
+  - LaTeX table export
+
+**3. `run_ablation.py` (Ablation Study)**
+- Progress indication with variant descriptions
+- Summary statistics for both variants (EKF vs SMBNA)
+- File location information
+- Column descriptions
+- Code examples for:
+  - Loading results
+  - Comparing variants
+  - Statistical significance testing
+  - LaTeX export
+
+**4. `run_sweep.py` (Parameter Sweep)**
+- Progress indication with parameter ranges
+- Summary statistics for each threshold value
+- File location information
+- Column descriptions
+- Code examples for:
+  - Loading results
+  - Grouping and analyzing by threshold
+  - LaTeX export
+
+### New Script: `run_all_simulations.py`
+
+Created comprehensive script to run all batch simulations in sequence.
+
+**Features:**
+- Runs Monte Carlo, ablation study, and parameter sweep
+- Configurable parameters for each simulation type
+- Option to skip specific simulations
+- Progress indicators for each simulation
+- Comprehensive summary of all generated files
+- Next steps guidance for analysis
+
+**Usage:**
+```bash
+# Run all simulations with default parameters
+python -m smbna.simulation.run_all_simulations
+
+# Custom parameters
+python -m smbna.simulation.run_all_simulations --monte-carlo-runs 100
+
+# Skip specific simulations
+python -m smbna.simulation.run_all_simulations --skip-sweep
+```
+
+**Output:**
+- `results/monte_carlo.csv` and `.parquet`
+- `results/ablation_refusal.csv` and `.parquet`
+- `results/refusal_sweep.csv` and `.parquet`
+
+### README: Enhanced Simulation Documentation
+
+Added comprehensive "Running Simulations" section to README.md with:
+
+**Content:**
+- Explanation of what simulations do
+- Available simulation types (5 types documented)
+- Complete usage examples for each type
+  - Command-line usage
+  - Programmatic usage with code examples
+- Simulation outputs description
+- Configuration options table
+- Visualization examples
+
+**Impact:**
+- Better user onboarding
+- Reduced need for additional documentation lookups
+- Clear examples for all simulation types
+- Professional, enterprise-ready documentation
+
+### Files Changed
+
+**Simulation Scripts:**
+- `smbna/simulation/run_simulation.py` - Enhanced main() with helpful messages
+- `smbna/simulation/run_monte_carlo.py` - Added comprehensive output messages
+- `smbna/simulation/run_ablation.py` - Added main() block with helpful messages
+- `smbna/simulation/run_sweep.py` - Added main() block with helpful messages
+- `smbna/simulation/run_all_simulations.py` - New script (created)
+
+**Documentation:**
+- `README.md` - Added comprehensive "Running Simulations" section
+
+### Impact
+
+**User Experience:**
+- Clear feedback on simulation progress and results
+- Easy-to-find information about result file locations
+- Code examples for common next steps
+- Reduced friction when using simulation tools
+
+**Developer Experience:**
+- Better structured simulation execution
+- Consistent messaging across all scripts
+- Easier to run comprehensive evaluation suites
+- Professional command-line interface
+
+**Research Workflow:**
+- Faster iteration on experiments
+- Clear documentation of simulation capabilities
+- Better reproducibility guidance
+- Comprehensive evaluation in single command

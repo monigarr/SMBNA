@@ -309,17 +309,47 @@ def run_simulation(cfg: SimConfig) -> Dict:
 # -----------------------------
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--time", type=float, default=300)
-    parser.add_argument("--seed", type=int, default=42)
+    parser = argparse.ArgumentParser(
+        description="Run a single navigation simulation with GPS degradation and spoofing."
+    )
+    parser.add_argument("--time", type=float, default=300,
+                        help="Simulation duration in seconds (default: 300)")
+    parser.add_argument("--seed", type=int, default=42,
+                        help="Random seed for reproducibility (default: 42)")
     args = parser.parse_args()
 
     cfg = SimConfig(total_time=args.time, seed=args.seed)
     logs = run_simulation(cfg)
 
-    print("Simulation complete.")
-    print(f"Final position error: "
-          f"{np.linalg.norm(logs['truth'][-1][:2] - logs['estimate'][-1][:2]):.2f} m")
+    final_error = np.linalg.norm(logs['truth'][-1][:2] - logs['estimate'][-1][:2])
+    refusal_rate = np.mean(logs['refusal']) if len(logs['refusal']) > 0 else 0.0
+
+    print("\n" + "="*70)
+    print("SIMULATION COMPLETE")
+    print("="*70)
+    print(f"Configuration:")
+    print(f"  Duration: {args.time:.1f} seconds")
+    print(f"  Random seed: {args.seed}")
+    print(f"\nResults:")
+    print(f"  Final position error: {final_error:.2f} m")
+    print(f"  Refusal rate: {refusal_rate:.2%}")
+    print(f"  Timesteps: {len(logs['truth'])}")
+    print("\n" + "="*70)
+    print("NEXT STEPS:")
+    print("="*70)
+    print("The simulation logs are available in memory (returned as dictionary).")
+    print("\nTo visualize results, use:")
+    print("  from smbna.analysis.plot_trajectory import plot_trajectory")
+    print("  plot_trajectory(logs)")
+    print("\n  from smbna.analysis.plot_innovation_hist import plot_innovation")
+    print("  plot_innovation(logs)")
+    print("\nTo save results to CSV/Parquet files, use:")
+    print("  from smbna.simulation.experiment_io import logs_to_row, write_results")
+    print(f"  row = logs_to_row(logs, seed={args.seed})")
+    print("  df = write_results([row], name='simulation_results')")
+    print("\nFor programmatic usage, see:")
+    print("  python -m smbna.simulation.run_simulation --help")
+    print("="*70 + "\n")
 
 
 if __name__ == "__main__":

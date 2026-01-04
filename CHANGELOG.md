@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Comprehensive command-line messages for all simulation scripts
+  - Clear progress indicators and result summaries
+  - File location information for saved results
+  - Code examples for next steps (visualization, analysis)
+  - Helpful guidance for users running simulations
+- New `run_all_simulations.py` script to run all batch simulations
+  - Runs Monte Carlo, ablation study, and parameter sweep in sequence
+  - Configurable parameters for each simulation type
+  - Option to skip specific simulations
+  - Comprehensive summary of all generated results
+- Enhanced README with detailed "Running Simulations" section
+  - Explanation of what simulations do
+  - Complete usage examples for all simulation types
+  - Configuration options documentation
+  - Output format descriptions
+  - Visualization examples
+
+### Changed
+- Improved user experience for simulation scripts
+  - All scripts now provide clear feedback on where results are saved
+  - Better guidance on how to use simulation outputs
+  - More informative error messages and progress indicators
+
 ### Fixed
 - Fixed code errors in invariant modules (missing imports, syntax errors)
 - Fixed trust engine missing configuration constants

@@ -133,16 +133,172 @@ else:
 
 ### Running Simulations
 
+SMBNA includes a comprehensive simulation harness for evaluating navigation performance under GPS-degraded, denied, and adversarial conditions. The simulations model a planar drone navigating with GPS and IMU sensors, including realistic sensor noise, GPS dropouts, and spoofing attacks.
+
+#### What the Simulations Do
+
+The simulation framework provides:
+
+- **Time-stepped navigation simulation**: Models a drone moving in 2D space with position (x, y), velocity (vx, vy), and heading
+- **Sensor simulation**: Realistic GPS and IMU measurements with configurable noise, dropout, and spoofing
+- **EKF baseline**: Extended Kalman Filter for sensor fusion (used as comparison baseline)
+- **SMBNA integration**: Optional refusal logic that masks estimates when confidence collapses
+- **Ground truth tracking**: Maintains true state for error analysis and evaluation
+- **Comprehensive logging**: Records trajectories, innovations, refusal events, and performance metrics
+
+#### Available Simulation Types
+
+**1. Single Simulation Run** (`run_simulation.py`)
+- Runs one simulation with specified parameters
+- Returns detailed logs for analysis and visualization
+- Useful for debugging, visualization, and understanding system behavior
+
+**2. Monte Carlo Evaluation** (`run_monte_carlo.py`)
+- Runs multiple simulations across different random seeds
+- Aggregates statistics (mean, std, max error) across runs
+- Generates CSV/Parquet files with aggregated results
+- Used for statistical performance evaluation
+
+**3. Ablation Studies** (`run_ablation.py`)
+- Compares baseline (EKF only) vs. SMBNA (with refusal logic)
+- Runs both variants with identical seeds for fair comparison
+- Quantifies the impact of refusal logic on performance
+- Generates comparison data for analysis
+
+**4. Variant Comparison** (`compare_variants.py`)
+- Compares different system configurations side-by-side
+- Ensures fair comparison using identical random seeds
+- Useful for evaluating design choices
+
+**5. Parameter Sweeps** (`run_sweep.py`)
+- Tests system sensitivity to parameter values
+- Sweeps across parameter ranges (e.g., refusal thresholds)
+- Identifies optimal configurations
+
+#### Running Simulations
+
+**Single Simulation:**
 ```bash
-# Run a single simulation
-python -m smbna.simulation.run_simulation --time 300 --seed 42
+# Command line
+python -m smbna.simulation.run_simulation
+python -m smbna.simulation.run_simulation --time 600 --seed 123
 
-# Run Monte Carlo evaluation
-python -m smbna.simulation.run_monte_carlo --runs 50
+# Programmatic
+from smbna.simulation.run_simulation import run_simulation, SimConfig
 
-# Run ablation study
-python -m smbna.simulation.run_ablation --runs 50
+config = SimConfig(
+    total_time=300.0,      # Simulation duration (seconds)
+    seed=42,              # Random seed for reproducibility
+    gps_noise=2.0,        # GPS measurement noise (meters)
+    imu_noise=0.05,       # IMU noise level
+    gps_dropout_prob=0.2, # Probability of GPS dropout
+    spoof_bias=15.0       # GPS spoofing bias magnitude (meters)
+)
+
+logs = run_simulation(config)
+# Returns: dict with keys: truth, estimate, gps_used, innovation_norm, refusal
 ```
+
+**Monte Carlo Evaluation:**
+```bash
+# Command line
+python -m smbna.simulation.run_monte_carlo
+
+# Programmatic
+from smbna.simulation.run_monte_carlo import monte_carlo
+
+results = monte_carlo(num_runs=50, out_name="monte_carlo")
+print(f"Mean error: {results['mean_error']:.2f} m")
+print(f"Std error: {results['std_error']:.2f} m")
+print(f"Max error: {results['max_error']:.2f} m")
+# Results saved to: results/monte_carlo.csv and results/monte_carlo.parquet
+```
+
+**Ablation Study:**
+```bash
+# Command line
+python -m smbna.simulation.run_ablation
+
+# Programmatic
+from smbna.simulation.run_ablation import run_ablation
+
+df = run_ablation(num_runs=50)
+# Results saved to: results/ablation_refusal.csv
+# Columns: seed, variant (ekf/smbna), final_position_error_m, refusal_rate, etc.
+```
+
+**Variant Comparison:**
+```python
+from smbna.simulation.compare_variants import run_variant
+from smbna.simulation.run_simulation import SimConfig
+
+config = SimConfig(seed=42)
+
+# Run baseline (EKF only, no refusal)
+logs_baseline = run_variant(config, enable_refusal=False)
+
+# Run SMBNA (with refusal logic)
+logs_smbna = run_variant(config, enable_refusal=True)
+```
+
+**Parameter Sweep:**
+```python
+from smbna.simulation.run_sweep import sweep_refusal_thresholds
+
+df = sweep_refusal_thresholds(
+    thresholds=(5, 10, 15, 20, 30, 50),  # Refusal threshold values to test
+    seeds=range(20)                       # Random seeds per threshold
+)
+# Results saved to: results/refusal_sweep.csv
+```
+
+#### Simulation Outputs
+
+All simulations generate structured logs containing:
+
+- **`truth`**: Ground-truth state trajectory (numpy array, shape: [n_timesteps, 5])
+- **`estimate`**: Estimated state trajectory (numpy array, shape: [n_timesteps, 5])
+- **`gps_used`**: Binary flags indicating GPS availability (numpy array)
+- **`innovation_norm`**: GPS innovation (residual) magnitudes (numpy array, meters)
+- **`refusal`**: Refusal flags indicating when navigation was refused (numpy array)
+
+Monte Carlo and ablation studies also generate CSV/Parquet files with aggregated metrics:
+- `final_position_error_m`: Final position error (meters)
+- `mean_innovation`: Mean GPS innovation magnitude
+- `max_innovation`: Maximum GPS innovation magnitude
+- `refusal_rate`: Fraction of timesteps where navigation was refused
+- `variant`: System variant identifier (ekf, smbna, etc.)
+
+#### Configuration Options
+
+The `SimConfig` dataclass supports the following parameters:
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `dt` | 0.1 | Time step (seconds) |
+| `total_time` | 300.0 | Simulation duration (seconds) |
+| `gps_noise` | 2.0 | GPS measurement noise standard deviation (meters) |
+| `imu_noise` | 0.05 | IMU noise level |
+| `gps_dropout_prob` | 0.2 | Probability of GPS dropout per timestep |
+| `spoof_bias` | 15.0 | GPS spoofing bias magnitude (meters) |
+| `seed` | 42 | Random seed for reproducibility |
+
+#### Visualization
+
+After running simulations, use the analysis tools to visualize results:
+
+```python
+from smbna.analysis.plot_trajectory import plot_trajectory
+from smbna.analysis.plot_innovation_hist import plot_innovation
+
+# Plot trajectory comparison
+plot_trajectory(logs)
+
+# Plot innovation (residual) over time
+plot_innovation(logs)
+```
+
+For more details, see the [Development Guide](./docs/development_guide.md) and [API Reference](./docs/api_reference.md).
 
 ---
 

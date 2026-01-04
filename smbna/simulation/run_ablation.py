@@ -52,3 +52,66 @@ def run_ablation(num_runs=50):
         rows.append(logs_to_row(logs_smbna, seed, "smbna"))
 
     return write_results(rows, name="ablation_refusal")
+
+
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(
+        description="Run ablation study comparing baseline (EKF) vs. SMBNA (with refusal)."
+    )
+    parser.add_argument("--runs", type=int, default=50,
+                        help="Number of simulation runs per variant (default: 50)")
+    args = parser.parse_args()
+    
+    print(f"\nRunning ablation study with {args.runs} runs per variant...")
+    print("Comparing:")
+    print("  - Baseline (EKF only, no refusal)")
+    print("  - SMBNA (with refusal logic)")
+    print("This may take several minutes depending on the number of runs.\n")
+    
+    df = run_ablation(num_runs=args.runs)
+    
+    # Compute summary statistics
+    ekf_df = df[df['variant'] == 'ekf']
+    smbna_df = df[df['variant'] == 'smbna']
+    
+    print("\n" + "="*70)
+    print("ABLATION STUDY COMPLETE")
+    print("="*70)
+    print(f"\nSummary Statistics ({args.runs} runs per variant):")
+    print(f"\nBaseline (EKF):")
+    print(f"  Mean final position error: {ekf_df['final_position_error_m'].mean():.2f} m")
+    print(f"  Std final position error: {ekf_df['final_position_error_m'].std():.2f} m")
+    print(f"  Mean refusal rate: {ekf_df['refusal_rate'].mean():.2%}")
+    
+    print(f"\nSMBNA (with refusal):")
+    print(f"  Mean final position error: {smbna_df['final_position_error_m'].mean():.2f} m")
+    print(f"  Std final position error: {smbna_df['final_position_error_m'].std():.2f} m")
+    print(f"  Mean refusal rate: {smbna_df['refusal_rate'].mean():.2%}")
+    
+    print("\n" + "="*70)
+    print("RESULTS SAVED TO:")
+    print("="*70)
+    print("  CSV: results/ablation_refusal.csv")
+    print("  Parquet: results/ablation_refusal.parquet")
+    print("\nThese files contain per-run metrics for both variants:")
+    print("  - seed: Random seed for each run")
+    print("  - variant: 'ekf' or 'smbna'")
+    print("  - final_position_error_m: Final position error (meters)")
+    print("  - mean_innovation: Mean GPS innovation magnitude")
+    print("  - max_innovation: Maximum GPS innovation magnitude")
+    print("  - refusal_rate: Fraction of timesteps where navigation was refused")
+    print("\nTo load and analyze results:")
+    print("  import pandas as pd")
+    print("  df = pd.read_csv('results/ablation_refusal.csv')")
+    print("  # Compare variants:")
+    print("  ekf_errors = df[df['variant'] == 'ekf']['final_position_error_m']")
+    print("  smbna_errors = df[df['variant'] == 'smbna']['final_position_error_m']")
+    print("\nTo perform statistical significance testing:")
+    print("  from smbna.analysis.significance import paired_significance")
+    print("  result = paired_significance(ekf_errors, smbna_errors)")
+    print("\nTo export to LaTeX tables:")
+    print("  from smbna.analysis.latex_export import dataframe_to_latex")
+    print("  dataframe_to_latex(df, 'ablation_refusal')")
+    print("="*70 + "\n")
