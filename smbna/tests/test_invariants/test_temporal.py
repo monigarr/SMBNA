@@ -104,11 +104,14 @@ class TestTemporalSmoothness:
             metadata={}
         )
         
-        history = [prev_state, current_state]
+        # History should only contain previous states, not current
+        history = [prev_state]
         
         result = invariant.score(current_state, history, [])
         
         # Should return penalty > 0 for unrealistic acceleration
+        # Acceleration = (100, 100) - (1, 1) / 0.1 = (990, 990) m/s²
+        # Norm ≈ 1400 m/s², which exceeds MAX_ACCEL (10.0 m/s²)
         assert result > 0.0
 
     @pytest.mark.unit

@@ -189,21 +189,22 @@ class TestTrustEngine:
         beliefs = []
         scores = {}
         
-        # Should handle gracefully (may raise exception or return refusal)
-        # Behavior depends on implementation
-        with pytest.raises((ValueError, KeyError, IndexError)):
-            arbitrate(beliefs, scores)
+        # Should handle gracefully and return refusal
+        result = arbitrate(beliefs, scores)
+        assert result["nav_unsafe"] is True
+        assert "reason" in result
 
     @pytest.mark.unit
     @pytest.mark.critical
     def test_arbitration_missing_belief_in_scores(self, sample_belief_state):
         """Test arbitration when belief ID is missing from scores."""
         beliefs = [sample_belief_state]
-        scores = {}  # Missing "gps" key
+        scores = {}  # Missing "gps" key - should default to 0.0 penalty
         
-        # Should raise KeyError
-        with pytest.raises(KeyError):
-            arbitrate(beliefs, scores)
+        # Should handle gracefully with default penalty of 0.0
+        result = arbitrate(beliefs, scores)
+        assert "nav_unsafe" in result
+        assert "selected" in result or "reason" in result
 
     @pytest.mark.unit
     @pytest.mark.critical

@@ -34,11 +34,18 @@ VERSION
 1.0.0
 ===============================================================================
 """
+from smbna.invariants.base import Invariant
+from numpy.linalg import norm
+
+# Configuration constants (should be loaded from config in production)
+MAX_AIRSPEED = 100.0  # m/s, typical maximum airspeed for small UAVs
+
 
 class PhysicsInvariant(Invariant):
     name = "physics_feasibility"
 
-    def score(self, belief, _, _):
+    def score(self, belief, belief_history, other_beliefs):
+        """Score physics feasibility based on velocity magnitude."""
         speed = norm(belief.velocity)
 
         if speed > MAX_AIRSPEED:

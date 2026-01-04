@@ -52,12 +52,39 @@ VERSION
 
 import numpy as np
 
+# Configuration constants (should be loaded from config in production)
+LAMBDA = 1.0  # Penalty scaling factor
+TRUST_MIN = 0.3  # Minimum trust threshold for navigation
+
+
 def arbitrate(beliefs, invariant_scores):
+    """
+    Arbitrate between multiple beliefs to select the most trustworthy.
+    
+    Parameters
+    ----------
+    beliefs : list[BeliefState]
+        List of belief states to choose from
+    invariant_scores : dict[str, float]
+        Dictionary mapping belief_id to invariant penalty score
+        
+    Returns
+    -------
+    dict
+        Decision dictionary with keys:
+        - nav_unsafe: bool - True if navigation should be refused
+        - selected: str - Selected belief_id (if nav_unsafe=False)
+        - confidence: float - Trust score of selected belief (if nav_unsafe=False)
+        - reason: str - Reason for refusal (if nav_unsafe=True)
+    """
     trust = {}
 
     for b in beliefs:
-        penalty = invariant_scores[b.belief_id]
+        penalty = invariant_scores.get(b.belief_id, 0.0)
         trust[b.belief_id] = b.internal_confidence * np.exp(-LAMBDA * penalty)
+
+    if not trust:
+        return {"nav_unsafe": True, "reason": "no beliefs available"}
 
     best_id, best_score = max(trust.items(), key=lambda x: x[1])
 

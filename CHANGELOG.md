@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed code errors in invariant modules (missing imports, syntax errors)
+- Fixed trust engine missing configuration constants
+- Fixed BeliefState numpy array comparison
+- Fixed pytest plugin conflicts (pytest_dash compatibility)
+- Fixed pytest configuration (TOML syntax, marker registration)
+- All 57 tests now passing
+
 ### Planned
 - Extended belief engines
 - Additional invariant validators

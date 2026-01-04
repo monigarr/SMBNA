@@ -105,6 +105,7 @@ which python  # Should point to venv
 - Tests fail with assertion errors
 - Tests fail with import errors
 - Tests fail with timeout errors
+- Pytest plugin errors (e.g., `pytest_dash`)
 
 **Diagnosis:**
 ```bash
@@ -116,6 +117,9 @@ pytest smbna/tests/test_core/test_belief_state.py -v
 
 # Check test output
 pytest --tb=short
+
+# Run without coverage (faster, fewer dependencies)
+pytest --no-cov
 ```
 
 **Solutions:**
@@ -125,17 +129,29 @@ pytest --tb=short
    pip install -e ".[dev]"
    ```
 
-2. **Test Data Issues:**
+2. **Pytest Plugin Conflicts:**
+   ```bash
+   # Run with plugin disabled (if needed)
+   pytest -p no:dash
+   
+   # Or use --no-cov to avoid coverage-related issues
+   pytest --no-cov
+   ```
+
+3. **Test Data Issues:**
    ```bash
    # Clear test cache
    pytest --cache-clear
    ```
 
-3. **Environment Issues:**
+4. **Environment Issues:**
    ```bash
    # Check environment variables
    env | grep SMBNA
    ```
+
+**Note:** The project configuration automatically disables problematic plugins.
+If you encounter plugin errors, ensure you're using the latest configuration files.
 
 ---
 

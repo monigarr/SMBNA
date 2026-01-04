@@ -34,18 +34,28 @@ VERSION
 1.0.0
 ===============================================================================
 """
+from smbna.invariants.base import Invariant
+from numpy.linalg import norm
+
+# Configuration constants (should be loaded from config in production)
+MAX_ACCEL = 10.0  # m/s², typical maximum acceleration for small UAVs
+
 
 class TemporalSmoothness(Invariant):
     name = "temporal_smoothness"
 
-    def score(self, belief, history, _):
-        if len(history) < 2:
+    def score(self, belief, belief_history, other_beliefs):
+        """Score temporal smoothness based on acceleration."""
+        if len(belief_history) < 1:
             return 0.0
 
-        prev = history[-1]
+        prev = belief_history[-1]
         dt = belief.timestamp - prev.timestamp
 
-        accel = (belief.velocity - prev.velocity) / max(dt, 1e-3)
+        if dt <= 0:
+            return 0.0
+
+        accel = (belief.velocity - prev.velocity) / dt
 
         if norm(accel) > MAX_ACCEL:
             return (norm(accel) - MAX_ACCEL) / MAX_ACCEL

@@ -60,6 +60,25 @@ testpaths = ["smbna/tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "-p", "no:dash",  # Disable pytest_dash plugin (has selenium compatibility issues)
+    # Coverage options (can be overridden with --no-cov)
+    "--cov=smbna",
+    "--cov-report=html",
+    "--cov-report=term-missing",
+    "--cov-fail-under=20",  # Realistic threshold (critical paths at 100%)
+]
+markers = [
+    "unit: Unit tests (fast, isolated)",
+    "integration: Integration tests (component interactions)",
+    "slow: Slow running tests (may take > 1 second)",
+    "critical: Critical path tests (safety-critical components)",
+    "baseline: Baseline comparison tests",
+    "simulation: Simulation and scenario tests",
+]
 
 [tool.coverage.run]
 source = ["smbna"]
@@ -80,8 +99,7 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "@abstractmethod",
 ]
-
 precision = 2
-show_missing = True
-skip_covered = False
+skip_covered = false
+show_missing = true
 

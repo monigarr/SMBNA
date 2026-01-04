@@ -48,3 +48,18 @@ class BeliefState:
     internal_confidence: float
     timestamp: float
     metadata: dict
+    
+    def __eq__(self, other):
+        """Equality comparison that handles numpy arrays properly."""
+        if not isinstance(other, BeliefState):
+            return False
+        
+        return (
+            self.belief_id == other.belief_id
+            and np.array_equal(self.position, other.position)
+            and np.array_equal(self.velocity, other.velocity)
+            and np.array_equal(self.covariance, other.covariance)
+            and self.internal_confidence == other.internal_confidence
+            and self.timestamp == other.timestamp
+            and self.metadata == other.metadata
+        )
