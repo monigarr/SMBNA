@@ -288,7 +288,6 @@ SMBNA is especially relevant for:
 - Safety-critical autonomous systems
 - Long-duration or remote operations
 - Future hybrid classical + quantum navigation stacks
-- Defense and civil autonomy programs
 
 ---
 
